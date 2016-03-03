@@ -14,26 +14,13 @@
 	<section style="border: 1px solid red;">
 		Other Peer ID to connect to:
 		<input type="text" id="rid">
-		<input type="button" value="Connect" id="connectToPeer">
-		<br />
-		<button id="closeAConnection">Close selected connections</button>
 	</section>
 
 	<section style="border: 1px solid red;">
-		<form id="sendToPeers">
-			<input type="text" id="messageToSend" placeholder="Enter message">
-			<input type="submit" value="Send to selected peers">
-		</form>
-	</section>
-
-	<section style="border: 1px solid red;">
-		<div id="connections">
-			<span>No connections.</span>
-		</div>
-	</section>
-
-	<section id="box" style="background: red; font-size: 18px;padding:40px 30px; text-align: center;">
-		Drag file here to send to active connections.
+		<button id="sendToPeers">send</button>
+		<button id="openConnection">open</button>
+		<button id="closeConnection">close</button>
+		<input type="text" id="messageToSend" placeholder="Enter message">
 	</section>
 
 	<section>
