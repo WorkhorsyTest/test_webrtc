@@ -1,14 +1,6 @@
 
-// Connect to PeerJS, have server assign an ID instead of providing one
-// Showing off some of the configs available with PeerJS :).
-var peer = new Peer({
-	key: 'x7fwx2kavpy6tj4i',
-	debug: 3,
-	logFunction: function() {
-		var copy = Array.prototype.slice.call(arguments).join(' ');
-		$('#log').append(copy + '<br>');
-	}
-});
+
+var peer = null;
 var connectedPeers = {};
 
 function doNothing(e) {
@@ -77,19 +69,50 @@ function eachActiveConnection(fn) {
 	});
 }
 
-// Show this peer's ID.
-peer.on('open', function(id){
-	$('#pid').text(id);
-});
+function generateRandomUserID() {
+	// Get a 20 character user id
+	var code_table = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	var user_id = "";
+	for (var i = 0; i < 20; ++i) {
+		// Get a random number between 0 and 35
+		var num = Math.floor((Math.random() * 36));
 
-// Await connections from others
-peer.on('connection', connect);
+		// Get the character that corresponds to the number
+		user_id += code_table[num];
+	}
 
-peer.on('error', function(err) {
-	console.log(err);
-});
+	return user_id;
+}
 
 $(document).ready(function() {
+	// Create a random user id
+	var peer_id = generateRandomUserID();
+	$('#pid').text(peer_id);
+
+	peer = new Peer(peer_id, {
+		// key: 'x7fwx2kavpy6tj4i', // If there is a key, it will use the peerjs server
+		host: 'localhost',
+		port: 9000,
+		path: '/myapp',
+		debug: 3,
+		logFunction: function() {
+			var copy = Array.prototype.slice.call(arguments).join(' ');
+			$('#log').append(copy + '<br>');
+		}
+	});
+
+	peer.on('open', function(id) {
+		console.info('open ..................' + id);
+		//$('#pid').text(id);
+	});
+
+	// Await connections from others
+	peer.on('connection', connect);
+
+	peer.on('error', function(err) {
+		console.log(err);
+	});
+
 	// Prepare file drop box.
 	var box = $('#box');
 	box.on('dragenter', doNothing);
