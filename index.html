@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script type="text/javascript" src="jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="peer.js"></script>
+	<script type="text/javascript" src="main.js"></script>
+</head>
+<body>
+	<section style="border: 1px solid red;">
+		Your Peer ID: <span id="pid"></span>
+	</section>
+
+	<section style="border: 1px solid red;">
+		Other Peer ID to connect to:
+		<input type="text" id="rid">
+		<input type="button" value="Connect" id="connectToPeer">
+		<br />
+		<button id="closeAConnection">Close selected connections</button>
+	</section>
+
+	<section style="border: 1px solid red;">
+		<form id="sendToPeers">
+			<input type="text" id="messageToSend" placeholder="Enter message">
+			<input type="submit" value="Send to selected peers">
+		</form>
+	</section>
+
+	<section style="border: 1px solid red;">
+		<div id="connections">
+			<span>No connections.</span>
+		</div>
+	</section>
+
+	<section id="box" style="background: red; font-size: 18px;padding:40px 30px; text-align: center;">
+		Drag file here to send to active connections.
+	</section>
+
+	<section>
+		<div id="log" style="border: 1px solid black;">
+			<strong>Connection status</strong>:
+			<br />
+		</div>
+	</section>
+</body>
+</html>
