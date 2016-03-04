@@ -33,25 +33,37 @@ function generateRandomUserID() {
 }
 
 $(document).ready(function() {
-	// Create a random user id
-	var peer_id = generateRandomUserID();
-	$('#pid').text(peer_id);
+	var peer_id = null;
+	var use_public_server = false;
 
-	peer = new Peer(peer_id, {
-		// key: 'x7fwx2kavpy6tj4i', // If there is a key, it will use the peerjs server
-		host: 'localhost',
-		port: 9000,
-		path: '/myapp',
-		debug: 3,
-		logFunction: function() {
-			var copy = Array.prototype.slice.call(arguments).join(' ');
-			$('#log').append(copy + '<br>');
-		}
-	});
+	var logFunction = function() {
+		var copy = Array.prototype.slice.call(arguments).join(' ');
+		$('#log').append(copy + '<br>');
+	};
+
+	if (use_public_server) {
+		peer = new Peer({
+			key: 'x7fwx2kavpy6tj4i',
+			debug: 3,
+			logFunction: logFunction
+		});
+	} else {
+		// Create a random user id
+		var id = generateRandomUserID();
+		peer = new Peer(id, {
+			host: 'localhost',
+			port: 9000,
+			path: '/myapp',
+			debug: 3,
+			logFunction: logFunction
+		});
+	}
 
 	peer.on('open', function(id) {
 		console.info('open ..................' + id);
 		//$('#pid').text(id);
+		peer_id = id;
+		$('#pid').text(peer_id);
 	});
 
 	// Await connections from others
