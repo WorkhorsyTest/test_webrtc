@@ -34,6 +34,7 @@ function generateRandomUserID() {
 
 $(document).ready(function() {
 	var peer_id = null;
+	var peer = null;
 	var use_public_server = false;
 
 	var logFunction = function() {

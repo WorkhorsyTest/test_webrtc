@@ -5,6 +5,7 @@ Install node and peerjs:
 curl -sL https://deb.nodesource.com/setup_5.x | bash -
 apt-get install -y nodejs
 npm install peer
+npm install express
 ```
 
 Run peerjs server:
@@ -12,9 +13,5 @@ Run peerjs server:
 node peer_server.js
 ```
 
-Run web client:
-```bash
-python3 -m http.server 9999
-```
 
 http://localhost:9999
