@@ -1,11 +1,10 @@
 
 
-var peer = null;
 
 
-// Handle a connection object.
+
 function connect(c) {
-	// Handle a chat connection.
+	// Handle a chat connection
 	if (c.label === 'chat') {
 		c.on('data', function(data) {
 			console.info('data: ' + data);
@@ -57,7 +56,7 @@ function logFunction() {
 	$('#log').append(copy + '<br>');
 }
 
-var my_id = null;
+var g_my_id = null;
 var g_peers = [];
 var g_server = null;
 var g_cons = [];
@@ -73,7 +72,7 @@ $(document).ready(function() {
 
 	$('#getConnections').click(function(e) {
 		for (var i=0; i<g_peers.length; ++i) {
-			if (my_id === g_peers[i]) return;
+			if (g_my_id === g_peers[i]) return;
 
 			var peer = g_peers[i];
 			console.info(peer);
@@ -117,8 +116,8 @@ $(document).ready(function() {
 	// Handle connection to peer server
 	server.on('open', function(id) {
 		console.info('server open: ' + id);
-		my_id = id;
-		$('#pid').text(my_id);
+		g_my_id = id;
+		$('#pid').text(g_my_id);
 	});
 
 	// Handle connections from peers
