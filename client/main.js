@@ -32,15 +32,118 @@ function generateRandomUserID() {
 	return user_id;
 }
 
-$(document).ready(function() {
-	var peer_id = null;
-	var peer = null;
-	var use_public_server = false;
-
-	var logFunction = function() {
-		var copy = Array.prototype.slice.call(arguments).join(' ');
-		$('#log').append(copy + '<br>');
+function httpGetJSON(url, cb, timeout) {
+	timeout = timeout || 3000;
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if (this.readyState === 4) {
+			cb(this.response, this.status);
+		} else if (this.readyState === 0) {
+			cb(null);
+		}
 	};
+	xhr.onerror = function() {
+		cb(null);
+	};
+	xhr.open('GET', url, true);
+	xhr.responseType = 'json';
+	xhr.timeout = timeout;
+	xhr.send(null);
+}
+
+
+function logFunction() {
+	var copy = Array.prototype.slice.call(arguments).join(' ');
+	$('#log').append(copy + '<br>');
+}
+
+var my_id = null;
+var g_peers = [];
+var g_server = null;
+var g_cons = [];
+
+
+$(document).ready(function() {
+	$('#getPeers').click(function(e) {
+		httpGetJSON('http://localhost:9999/peers.json', function(response, status) {
+			g_peers = response;
+			console.info(g_peers);
+		});
+	});
+
+	$('#getConnections').click(function(e) {
+		for (var i=0; i<g_peers.length; ++i) {
+			if (my_id === g_peers[i]) return;
+
+			var peer = g_peers[i];
+			console.info(peer);
+
+			con = g_server.connect(peer, {
+				label: 'chat',
+				serialization: 'none',
+				metadata: {message: 'message'}
+			});
+			con.on('open', function() {
+				console.info('open chat ..................' + con.peer);
+				connect(con);
+			});
+			con.on('error', function(err) {
+				console.info('error ..................' + con.peer);
+				console.error(err);
+			});
+			g_cons.push(con);
+		}
+	});
+
+	$('#sendToPeers').click(function(e) {
+		var msg = 'ass';
+		for (var i=0; i<g_cons.length; ++i) {
+			g_cons[i].send(msg);
+		}
+	});
+
+	// Create a random user id
+	var id = generateRandomUserID();
+
+	// Connect to the peer server
+	server = new Peer(id, {
+		host: 'localhost',
+		port: 9000,
+		path: '/myapp',
+		debug: 3,
+		logFunction: logFunction
+	});
+
+	// Handle connection to peer server
+	server.on('open', function(id) {
+		console.info('server open: ' + id);
+		my_id = id;
+		$('#pid').text(my_id);
+	});
+
+	// Handle connections from peers
+	server.on('connection', function(c) {
+		console.info('peer open: ' + c.peer);
+		c.on('data', function(data) {
+			console.info('peer data: ' + data);
+		});
+		c.on('close', function() {
+			console.info('peer closed: ' + c.peer);
+		});
+	});
+
+	server.on('error', function(err) {
+		console.log(err);
+	});
+	g_server = server;
+});
+/*
+$(document).ready(function() {
+	httpGet('http://localhost:9999/peers.json', function(response, status) {
+		console.info(response);
+	});
+	var peer_id = null;
+	var use_public_server = false;
 
 	if (use_public_server) {
 		peer = new Peer({
@@ -109,4 +212,5 @@ window.onunload = window.onbeforeunload = function(e) {
 		peer.destroy();
 	}
 };
+*/
 
