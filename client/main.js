@@ -94,6 +94,23 @@ $(document).ready(function() {
 		}
 	});
 
+	$('#closeConnections').click(function(e) {
+		// Close the connections to the peers
+		for (var i=0; i<g_cons.length; ++i) {
+			console.info('Closing peer ' + g_cons[i].peer);
+			g_cons[i].close();
+		}
+		g_cons = [];
+		g_peers = [];
+
+		// Close the connection to the peer server
+		if (!!g_server && !g_server.destroyed) {
+			g_server.destroy();
+		}
+		g_server = null;
+		g_my_id = null;
+	});
+
 	// Create a random user id
 	var id = generateRandomUserID();
 
