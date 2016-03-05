@@ -3,19 +3,6 @@
 
 
 
-function connect(c) {
-	// Handle a chat connection
-	if (c.label === 'chat') {
-		c.on('data', function(data) {
-			console.info('data: ' + data);
-		});
-		c.on('close', function() {
-			console.info(c.peer + ' has left the chat.');
-		});
-		//console.info(c);
-	}
-}
-
 function generateRandomUserID() {
 	// Get a 20 character user id
 	var code_table = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -72,10 +59,8 @@ $(document).ready(function() {
 
 	$('#getConnections').click(function(e) {
 		for (var i=0; i<g_peers.length; ++i) {
-			if (g_my_id === g_peers[i]) return;
-
 			var peer = g_peers[i];
-			console.info(peer);
+			if (g_my_id === peer) continue;
 
 			con = g_server.connect(peer, {
 				label: 'chat',
@@ -83,8 +68,15 @@ $(document).ready(function() {
 				metadata: {message: 'message'}
 			});
 			con.on('open', function() {
-				console.info('open chat ..................' + con.peer);
-				connect(con);
+				console.info('peer outgoing open: ' + con.peer + ', ' + con.label);
+				if (con.label === 'chat') {
+					con.on('data', function(data) {
+						console.info('peer outgoing data: ' + con.peer + ', ' + data);
+					});
+					con.on('close', function() {
+						console.info('peer outgoing closed: ' + con.peer);
+					});
+				}
 			});
 			con.on('error', function(err) {
 				console.info('error ..................' + con.peer);
@@ -97,6 +89,7 @@ $(document).ready(function() {
 	$('#sendToPeers').click(function(e) {
 		var msg = 'ass';
 		for (var i=0; i<g_cons.length; ++i) {
+			console.info('Sending peer ' + g_cons[i].peer + ': ' + msg);
 			g_cons[i].send(msg);
 		}
 	});
@@ -121,13 +114,13 @@ $(document).ready(function() {
 	});
 
 	// Handle connections from peers
-	server.on('connection', function(c) {
-		console.info('peer open: ' + c.peer);
-		c.on('data', function(data) {
-			console.info('peer data: ' + data);
+	server.on('connection', function(con) {
+		console.info('peer incoming open: ' + con.peer + ', ' + con.label);
+		con.on('data', function(data) {
+			console.info('peer incoming data: ' + data);
 		});
-		c.on('close', function() {
-			console.info('peer closed: ' + c.peer);
+		con.on('close', function() {
+			console.info('peer incoming closed: ' + con.peer);
 		});
 	});
 
