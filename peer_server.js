@@ -20,6 +20,8 @@ var app = express();
 app.use(express.static('client'));
 
 app.get('/peers.json', function (req, res) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.setHeader('Content-Type', 'application/json');
 	res.send(JSON.stringify(Object.keys(g_ids)));
 });
